@@ -6,6 +6,7 @@ import { GeistMono } from "geist/font";
 import { Metadata } from "next";
 import { ThemeProvider } from "../components/theme-provider";
 import "./globals.css";
+import OnekoCat from "@/components/OnekoCat";
 
 export const metadata: Metadata = {
   title: "Armaan Yadav",
@@ -33,6 +34,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <GoogleAnalytics gaId="G-1JY768PP5D" />
       <body className={GeistMono.className}>
+        <OnekoCat/>
         <SmoothCursor />
         <ThemeProvider
           attribute="class"
