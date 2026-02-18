@@ -1,12 +1,11 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { SmoothCursor } from "@/components/ui/smooth-cursor";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { GeistMono } from "geist/font";
 import { Metadata } from "next";
 import { ThemeProvider } from "../components/theme-provider";
 import "./globals.css";
-import { GoogleTagManager } from '@next/third-parties/google'
-
 
 export const metadata: Metadata = {
   title: "Armaan Yadav",
@@ -32,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-       <GoogleTagManager gtmId="G-1JY768PP5D" />
+      <GoogleAnalytics gaId="G-1JY768PP5D" />
       <body className={GeistMono.className}>
         <SmoothCursor />
         <ThemeProvider
