@@ -15,6 +15,17 @@ export interface Project {
   githubLink: string;
 }
 
+export interface OpenSource {
+  title: string;
+  description: string;
+  technologies: string[];
+  npmLink?: string;
+  websiteLink?: string;
+  githubLink: string;
+  stats?: string;
+  date: string;
+}
+
 export interface BlogPost {
   id: string;
   title: string;
@@ -112,6 +123,19 @@ export const projects: Project[] = [
   },
 ];
 
+export const openSourceContributions: OpenSource[] = [
+  {
+    title: "create-react-jaldi",
+    description:
+      "Developed and published an NPM package to streamline React TypeScript/JavaScript project setup, now with 1,100+ all-time downloads. Provides a fully configured stack with ESLint, Prettier, Shadcn, Vite, Redux Toolkit, React Router DOM, and Tailwind CSS.",
+    technologies: ["React", "TypeScript", "NPM", "Vite", "Redux Toolkit", "Tailwind CSS"],
+    npmLink: "https://www.npmjs.com/package/create-react-jaldi",
+    githubLink: "https://github.com/armaan-yadav/create-react-jaldi",
+    stats: "1,100+ downloads",
+    date: "March 2025",
+  },
+];
+
 export const edducation: Education[] = [
   {
     schoolName: "Indian Institute of Technology, Kanpur",
@@ -133,13 +157,11 @@ export const workExperiences: WorkExperience[] = [
   {
     company: "Freelance Software Developer",
     role: "Software Developer",
-    description: `
-    Built a custom video editor with AI-powered features including AI avatars and automated upload workflows using Next.js, Remotion, and Docker for scalable video generation and processing.
-    Developed specialized tools for news media houses featuring AI-driven headline generation, script writing, anchor voiceover synthesis, and content paraphrasing to streamline newsroom workflows.
-    Engineered a centralized content publishing system enabling simultaneous uploads to Instagram, Facebook, X (Twitter), and YouTube using n8n, Facebook Graph API, YouTube API, and Meta Business Suite for cross-platform automation.
-    Delivered a full-stack NGO website with a custom admin panel built using React.js, Firebase, and Cloudinary for dynamic content management and media optimization.
-    Developed a local workflow for generating custom talking AI avatars using open-source models, implementing text-to-video and text-to-speech pipelines for personalized video content creation.
-    `,
+    description: `• Built custom video editor with AI avatars and automated workflows using Next.js, Remotion, and Docker
+• Developed AI-driven tools for news media: headline generation, script writing, and voiceover synthesis
+• Engineered centralized content publishing system for cross-platform automation (Instagram, Facebook, X, YouTube)
+• Created full-stack NGO website with custom admin panel using React.js, Firebase, and Cloudinary
+• Implemented local workflow for generating talking AI avatars with text-to-video and text-to-speech pipelines`,
     websiteLink: "",
     startDate: "September 2024",
     endDate: "Present",
@@ -161,15 +183,13 @@ export const workExperiences: WorkExperience[] = [
   {
     company: "Quantbug Technologies And Research LLP",
     role: "Software Developer",
-    description: `
-    Worked on multiple full-stack applications including news portals, chat applications, and college ERP systems, delivering scalable and user-centric solutions.
-    Led the end-to-end development of a SEO-optimized news portal for a local media outlet — Yug Abhiyaan Times — using Next.js with SSR, dynamic routing, and responsive UI.
-    Built a custom React.js-based admin panel featuring role-based access control, article and e-paper management, integrated thumbnail editor, and text-to-speech playback using Web Speech API.
-    Developed a secure backend using Node.js, Express.js, and MongoDB Atlas, implementing REST APIs, JWT authentication, middleware validation, and modular architecture.
-    Designed, developed, and deployed a mobile app and website from scratch using Flutter and React.js, including a robust admin panel with multi-role management.
-    Deployed applications using Dockerized services on an Ubuntu VPS via Coolify, managing CI/CD pipelines, domain configuration, and uptime monitoring.
-    Implemented analytics and performance tracking using Google Analytics and Search Console to improve indexing, visibility, and real-time performance insights.
-    `,
+    description: `• Developed multiple full-stack applications: news portals, chat apps, and college ERP systems
+• Led end-to-end development of SEO-optimized news portal (Yug Abhiyaan Times) using Next.js with SSR
+• Built custom React.js admin panel with role-based access control and e-paper management
+• Developed secure backend with Node.js, Express.js, and MongoDB implementing REST APIs and JWT authentication
+• Designed and deployed mobile app and website from scratch using Flutter and React.js
+• Managed Dockerized deployments on Ubuntu VPS via Coolify with CI/CD pipelines
+• Implemented analytics tracking using Google Analytics and Search Console for performance insights`,
     websiteLink: "https://yugabhiyaantimes.com/",
     startDate: "July 2024",
     endDate: "August 2025",
@@ -195,7 +215,7 @@ export const certificates: Certificate[] = [
     title: "NAMASTE REACT",
     url: "https://drive.google.com/file/d/1d3v-UuH7hSszudURJGKKOyGyYdqVA16I/view?usp=drive_link",
     description:
-      "Namaste Dev is an online platform to learn FrontEnd Development related course. I join for learn React JS Developer Course(Namaste React). Now I finished ReactJS Course authorized by AkshaySaini(founder of Namaste Dev).",
+      "",
   },
   {
     id: 2,
@@ -262,7 +282,7 @@ export const socialLinks: SocialLink[] = [
     icon: RiGithubLine,
     href: "https://github.com/armaan-yadav",
   },
-  { name: "Resume", icon: RiFileTextLine, href: "/resume/Armaan-Yadav.pdf" },
+  { name: "Resume", icon: RiFileTextLine, href: "/resume/resume.pdf" },
   {
     name: "Repository",
     icon: RiGitRepositoryLine,

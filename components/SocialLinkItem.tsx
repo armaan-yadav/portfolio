@@ -21,8 +21,8 @@ export function SocialLinkItem({
       transition={{ duration: 0.3, delay: index * 0.1 }}
     >
       <Link href={link.href} target="_blank" rel="noopener noreferrer">
-        <h3 className="text-sm font-semibold mb-0 flex items-center gap-2 hover:underline hover:underline-offset-4">
-          <link.icon className="text-gray-600 dark:text-gray-400 text-lg" />
+        <h3 className="text-base sm:text-lg font-semibold mb-0 flex items-center gap-2 hover:underline hover:underline-offset-4">
+          <link.icon className="text-gray-600 dark:text-gray-400 text-base sm:text-lg" />
           <span className="">{link.name}</span>
         </h3>
       </Link>

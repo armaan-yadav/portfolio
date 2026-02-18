@@ -90,7 +90,7 @@ export default function SplitLanding({ onComplete }: SplitLandingProps) {
       >
         {/* Content positioned at center of full screen, clipped by this half */}
         <div className="absolute top-0 left-0 w-full h-[200%] flex flex-col items-center justify-center">
-          <p className="text-black dark:text-white text-lg md:text-xl mb-2">
+          <p className="text-black dark:text-white text-base sm:text-lg mb-2">
             Hey, I'm
           </p>
           <h1 className="text-black dark:text-white text-[18vw] md:text-[14vw] font-black leading-none select-none whitespace-nowrap tracking-tight">
@@ -106,7 +106,7 @@ export default function SplitLanding({ onComplete }: SplitLandingProps) {
       >
         {/* Content positioned at center of full screen, clipped by this half */}
         <div className="absolute bottom-0 left-0 w-full h-[200%] flex flex-col items-center justify-center">
-          <p className="text-black dark:text-white text-lg md:text-xl mb-2">
+          <p className="text-black dark:text-white text-base sm:text-lg mb-2">
             Hey, I'm
           </p>
           <h1 className="text-black dark:text-white text-[18vw] md:text-[14vw] font-black leading-none select-none whitespace-nowrap tracking-tight">
@@ -115,14 +115,14 @@ export default function SplitLanding({ onComplete }: SplitLandingProps) {
         </div>
 
         {/* Location text - positioned relative to this half */}
-        <div className="absolute bottom-[20%] left-[5%] text-black dark:text-white text-sm md:text-base">
+        <div className="absolute bottom-[20%] left-[5%] text-black dark:text-white text-xs sm:text-sm">
           <p>Originally from</p>
-          <p className="italic font-light text-lg">Ambala, Haryana</p>
+          <p className="italic font-light text-base sm:text-lg">Ambala, Haryana</p>
         </div>
 
-        <div className="absolute bottom-[20%] right-[5%] text-black dark:text-white text-sm md:text-base text-right">
+        <div className="absolute bottom-[20%] right-[5%] text-black dark:text-white text-xs sm:text-sm text-right">
           <p>Currently in</p>
-          <p className="italic font-light text-lg">Vadodara, Gujarat</p>
+          <p className="italic font-light text-base sm:text-lg">Vadodara, Gujarat</p>
         </div>
 
         {/* Scroll indicator */}

@@ -36,12 +36,12 @@ export default function BlogPostItem({
       <Link href={post.link} className="block group">
         <h3 className="text-base sm:text-lg font-semibold mb-2 flex items-center gap-2 text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
           <RiBookOpenLine
-            className="text-gray-600 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200 text-2xl sm:text-lg"
+            className="text-gray-600 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200 text-base sm:text-lg"
             aria-hidden="true"
           />
           <span>{post.title}</span>
         </h3>
-        <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-3">
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-3">
           {post.description}
         </p>
         <div className="flex flex-wrap gap-1 mb-3">
@@ -54,17 +54,17 @@ export default function BlogPostItem({
             </span>
           ))}
         </div>
-        <div className="flex gap-2 sm:gap-6  text-xs text-gray-500 dark:text-gray-400">
+        <div className="flex gap-2 sm:gap-6  text-xs sm:text-sm text-gray-500 dark:text-gray-400">
           <div className="flex items-center">
             <RiCalendarLine
-              className="mr-1 text-sm sm:text-sm"
+              className="mr-1"
               aria-hidden="true"
             />
             <span>{post.publishedDate}</span>
           </div>
           <div className="flex items-center">
             <RiTimeLine
-              className="mr-1 text-sm sm:text-sm"
+              className="mr-1"
               aria-hidden="true"
             />
             <span>{post.readTime}</span>

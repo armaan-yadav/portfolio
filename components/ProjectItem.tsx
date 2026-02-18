@@ -20,13 +20,13 @@ export function ProjectItem({
       transition={{ duration: 0.2, delay: index * 0.1 }}
       // whileHover={{ x: 5 }}
     >
-      <h3 className="text-sm font-semibold mb-1 flex items-center gap-2">
-        <RiFolder2Line className="text-gray-600 dark:text-gray-400 text-lg" />
+      <h3 className="text-base sm:text-lg font-semibold mb-1 flex items-center gap-2">
+        <RiFolder2Line className="text-gray-600 dark:text-gray-400 text-base sm:text-lg" />
         <Link href={project.liveLink}>
           <span className="underline underline-offset-2">{project.title}</span>
         </Link>
       </h3>
-      <p className="text-gray-500 text-xs md:text-sm mb-2 dark:text-gray-400">
+      <p className="text-gray-500 text-sm sm:text-base mb-2 dark:text-gray-400">
         {project.description}
       </p>
       <div className="flex flex-wrap gap-1 mb-3">

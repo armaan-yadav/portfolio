@@ -62,7 +62,7 @@ export default function Header() {
     <div className="fixed top-0  w-full sm:w-full md:w-[80%] lg:w-[50%] bg-white dark:bg-black bg-opacity-70 dark:bg-opacity-70 backdrop-blur-md z-10 transition-colors duration-300">
       <header className="p-2 sm:p-4 sm:mx-0 mx-2 flex sm:flex justify-between items-center max-w-full ">
         <nav className="ml-2 sm:ml-0">
-          <ul className="flex flex-wrap items-center justify-center sm:justify-start space-x-1 sm:space-x-2 text-sm sm:text-base">
+          <ul className="flex flex-wrap items-center justify-center sm:justify-start space-x-1 sm:space-x-2 text-xs sm:text-sm">
             {getBreadcrumbs().map((breadcrumb, index) => (
               <li key={breadcrumb.path} className="flex items-center">
                 <Link
@@ -99,7 +99,7 @@ export default function Header() {
               // <FaCircle className="w-4 h-4 sm:w-4 sm:h-4 text-black" />
             )}
           </button>
-          <div className="text-sm sm:text-base" suppressHydrationWarning>
+          <div className="text-xs sm:text-sm" suppressHydrationWarning>
             {getTimeString() + " IST"}
           </div>
         </div>

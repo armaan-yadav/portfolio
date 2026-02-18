@@ -23,6 +23,7 @@ export default function Footer() {
     { href: "/projects", icon: RiFolder2Line, label: "Projects" },
     { href: "/work", icon: RiBriefcase2Line, label: "Work" },
     { href: "/education", icon: RiGraduationCapLine, label: "Education" },
+    { href: "/blog", icon: RiBallPenLine, label: "Blog" },
     { href: "/socials", icon: RiLinkM, label: "Socials" },
   ];
 

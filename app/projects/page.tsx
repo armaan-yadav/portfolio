@@ -1,5 +1,7 @@
 import { ProjectItem } from "@/components/ProjectItem";
-import { Project, projects } from "../utils/constants";
+import { OpenSourceItem } from "@/components/OpenSourceItem";
+import { Project, projects, openSourceContributions } from "../utils/constants";
+import Container from "@/components/Container";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -15,12 +17,30 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <main className="flex flex-col items-start justify-star p-3 md:p-5 max-w-full md:max-w-[75%] lg:max-w-[50%] mx-auto">
-      <div>
-        {projects.map((project, index) => (
-          <ProjectItem key={index} project={project} index={index} />
-        ))}
-      </div>
-    </main>
+    <Container as="main" className="flex flex-col items-start">
+      {/* Open Source Contributions Section */}
+      <section className="w-full mb-8">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4">Open Source</h2>
+        <div>
+          {openSourceContributions.map((contribution, index) => (
+            <OpenSourceItem
+              key={index}
+              contribution={contribution}
+              index={index}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Personal Projects Section */}
+      <section className="w-full">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4">Personal Projects</h2>
+        <div>
+          {projects.map((project, index) => (
+            <ProjectItem key={index} project={project} index={index} />
+          ))}
+        </div>
+      </section>
+    </Container>
   );
 }
