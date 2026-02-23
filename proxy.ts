@@ -25,10 +25,13 @@ export async function proxy(request: NextRequest) {
     }
   );
 
-  // Refresh session – don't remove this call
+  // Refresh session — use getSession() in middleware to avoid a live
+  // network round-trip to Supabase on every request (getUser() makes one,
+  // which can fail/timeout at the edge and incorrectly return null).
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
+  const user = session?.user ?? null;
 
   const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
   const isLoginPage = request.nextUrl.pathname === "/admin/login";
@@ -43,8 +46,8 @@ export async function proxy(request: NextRequest) {
     }
 
     // Optional: restrict to a single admin email
-    const adminEmail = process.env.ADMIN_EMAIL;
-    if (adminEmail && user.email !== adminEmail) {
+    const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+    if (adminEmail && user.email?.toLowerCase() !== adminEmail) {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/admin/login";
       loginUrl.searchParams.set("error", "unauthorized");
