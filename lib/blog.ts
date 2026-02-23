@@ -151,10 +151,10 @@ export function getRelativeTime(dateString: string): string {
 // ──────────────────────────────────────────────
 
 function getSupabaseClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
 }
 
 function supabasePostToMeta(post: Post): BlogPostMeta {
@@ -172,6 +172,7 @@ function supabasePostToMeta(post: Post): BlogPostMeta {
 
 export async function getSupabasePosts(): Promise<BlogPostMeta[]> {
   const supabase = getSupabaseClient();
+  if (!supabase) return [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabase.from("posts") as any)
     .select("id, title, slug, description, cover_image, published_at, created_at, author, read_time, tags")
@@ -186,6 +187,7 @@ export async function getSupabasePostBySlug(
   slug: string
 ): Promise<BlogPost | null> {
   const supabase = getSupabaseClient();
+  if (!supabase) return null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabase.from("posts") as any)
     .select("*")
