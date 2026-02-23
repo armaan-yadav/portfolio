@@ -125,3 +125,63 @@ body {
 .copy-button {
   @apply absolute top-2 right-2 opacity-0 transition-opacity;
 }
+
+/* ─── TipTap editor ───────────────────────────────── */
+.tiptap-editor .ProseMirror {
+  @apply outline-none;
+}
+
+.tiptap-editor .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  @apply text-gray-400 dark:text-gray-500 pointer-events-none float-left h-0;
+}
+
+/* Images inserted into TipTap */
+.tiptap-editor .ProseMirror img {
+  @apply max-w-full rounded-lg border border-gray-200 dark:border-gray-700 my-4 block;
+}
+
+/* YouTube embeds */
+.tiptap-editor .ProseMirror .tiptap-youtube,
+.tiptap-editor .ProseMirror iframe {
+  @apply w-full aspect-video rounded-lg my-4 block border-0;
+}
+
+/* Links in editor */
+.tiptap-editor .ProseMirror a.tiptap-link,
+.tiptap-editor .ProseMirror a {
+  @apply text-blue-600 dark:text-blue-400 underline cursor-pointer;
+}
+
+/* Code blocks in editor */
+.tiptap-editor .ProseMirror pre {
+  @apply bg-gray-900 text-gray-100 rounded-lg p-4 my-4 overflow-x-auto text-sm;
+}
+
+.tiptap-editor .ProseMirror code {
+  @apply font-mono text-sm bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded;
+}
+
+.tiptap-editor .ProseMirror pre code {
+  @apply bg-transparent p-0;
+}
+
+/* Selected node highlight */
+.tiptap-editor .ProseMirror .ProseMirror-selectednode {
+  @apply ring-2 ring-blue-500 ring-offset-1 rounded;
+}
+
+/* Blog content – images from Supabase posts */
+.blog-content img {
+  @apply max-w-full rounded-lg border border-gray-200 dark:border-gray-700 my-4 block;
+}
+
+.blog-content iframe,
+.blog-content .tiptap-youtube {
+  @apply w-full aspect-video rounded-lg my-4 block border-0;
+}
+
+.blog-content a {
+  @apply text-blue-600 dark:text-blue-400 underline;
+}
+

@@ -6,6 +6,8 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import rehypePrettyCode from "rehype-pretty-code";
+import { createClient } from "@supabase/supabase-js";
+import type { Post } from "@/types/supabase";
 
 const contentDirectory = path.join(process.cwd(), "app/content");
 
@@ -17,6 +19,7 @@ export interface BlogPostMeta {
   author: string;
   readTime: string;
   tags: string[];
+  coverImage?: string;
 }
 
 export interface BlogPost extends BlogPostMeta {
@@ -141,4 +144,76 @@ export function getRelativeTime(dateString: string): string {
   if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
   if (diffInDays < 365) return `${Math.floor(diffInDays / 30)} months ago`;
   return `${Math.floor(diffInDays / 365)} years ago`;
+}
+
+// ──────────────────────────────────────────────
+// Supabase-backed post helpers (published only)
+// ──────────────────────────────────────────────
+
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
+
+function supabasePostToMeta(post: Post): BlogPostMeta {
+  return {
+    slug: post.slug,
+    title: post.title,
+    description: post.description,
+    publishedDate: post.published_at ?? post.created_at,
+    author: post.author,
+    readTime: post.read_time,
+    tags: post.tags ?? [],
+    coverImage: post.cover_image ?? undefined,
+  };
+}
+
+export async function getSupabasePosts(): Promise<BlogPostMeta[]> {
+  const supabase = getSupabaseClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase.from("posts") as any)
+    .select("id, title, slug, description, cover_image, published_at, created_at, author, read_time, tags")
+    .eq("published", true)
+    .order("published_at", { ascending: false });
+
+  if (error || !data) return [];
+  return (data as Post[]).map(supabasePostToMeta);
+}
+
+export async function getSupabasePostBySlug(
+  slug: string
+): Promise<BlogPost | null> {
+  const supabase = getSupabaseClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase.from("posts") as any)
+    .select("*")
+    .eq("slug", slug)
+    .eq("published", true)
+    .single();
+
+  if (error || !data) return null;
+
+  const post = data as Post;
+  return {
+    ...supabasePostToMeta(post),
+    content: post.content ?? "",
+  };
+}
+
+export async function getAllPostsMerged(): Promise<BlogPostMeta[]> {
+  const [supabasePosts, localPosts] = await Promise.all([
+    getSupabasePosts(),
+    Promise.resolve(getAllPosts()),
+  ]);
+
+  // Supabase slugs take precedence; filter out any local duplicates
+  const supabaseSlugs = new Set(supabasePosts.map((p) => p.slug));
+  const filteredLocal = localPosts.filter((p) => !supabaseSlugs.has(p.slug));
+
+  return [...supabasePosts, ...filteredLocal].sort(
+    (a, b) =>
+      new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime()
+  );
 }

@@ -3,6 +3,8 @@ import {
   getAllSlugs,
   getRelatedPosts,
   getRelativeTime,
+  getSupabasePostBySlug,
+  getSupabasePosts,
 } from "@/lib/blog";
 import { notFound } from "next/navigation";
 import { RiCalendarLine, RiTimeLine, RiUser3Line } from "react-icons/ri";
@@ -10,6 +12,7 @@ import BlogEndSection from "@/components/BlogPostEnd";
 import RelatedPosts from "@/components/RelatedPosts";
 import CodeBlockCopyButton from "@/components/CodeBlockCopyButton";
 import Container from "@/components/Container";
+import Image from "next/image";
 import { Metadata } from "next";
 
 interface PageProps {
@@ -17,20 +20,25 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const slugs = getAllSlugs();
-  return slugs.map((slug) => ({ slug }));
+  const [localSlugs, supabasePosts] = await Promise.all([
+    Promise.resolve(getAllSlugs()),
+    getSupabasePosts(),
+  ]);
+  const allSlugs = [
+    ...localSlugs,
+    ...supabasePosts.map((p) => p.slug).filter((s) => !localSlugs.includes(s)),
+  ];
+  return allSlugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = (await getSupabasePostBySlug(slug)) ?? (await getPostBySlug(slug));
 
   if (!post) {
-    return {
-      title: "Post Not Found",
-    };
+    return { title: "Post Not Found" };
   }
 
   return {
@@ -48,7 +56,9 @@ export async function generateMetadata({
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+
+  // Check Supabase first, fall back to local markdown
+  const post = (await getSupabasePostBySlug(slug)) ?? (await getPostBySlug(slug));
 
   if (!post) {
     notFound();
@@ -61,6 +71,17 @@ export default async function BlogPostPage({ params }: PageProps) {
     <Container className="flex flex-col mt-3">
       <CodeBlockCopyButton />
       <article>
+        {post.coverImage && (
+          <div className="relative w-full aspect-video mb-8 overflow-hidden">
+            <Image
+              src={post.coverImage}
+              alt={post.title}
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        )}
         <header className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold mb-4">{post.title}</h1>
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4">

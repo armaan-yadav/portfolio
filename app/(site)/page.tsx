@@ -1,26 +1,18 @@
 "use client";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { FaArrowDownLong } from "react-icons/fa6";
 import { RiArrowRightLine, RiMailLine } from "react-icons/ri";
 import { skills } from "./utils/constants";
-import SplitLanding from "@/components/SplitLanding";
 import Container from "@/components/Container";
-import { useState } from "react";
 
 
 export default function Home() {
-  const [showContent, setShowContent] = useState(false);
-
   return (
-    <>
-      <SplitLanding onComplete={() => setShowContent(true)} />
-      <AnimatePresence>
-        {showContent && (
-          <Container
-            as="div"
-            className="flex flex-col mt-3"
-          >
+    <Container
+      as="div"
+      className="flex flex-col mt-3"
+    >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -93,9 +85,6 @@ export default function Home() {
           </div>
         </motion.div>
       </motion.div>
-      </Container>
-        )}
-      </AnimatePresence>
-    </>
+    </Container>
   );
 }

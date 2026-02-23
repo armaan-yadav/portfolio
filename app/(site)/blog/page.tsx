@@ -1,14 +1,16 @@
-import { getAllPosts } from "@/lib/blog";
+import { getAllPostsMerged, getRelativeTime } from "@/lib/blog";
 import BlogPostItem from "@/components/BlogPostItem";
 import Container from "@/components/Container";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Blog | Armaan Yadav",
   description: "Technical articles and tutorials on web development, DevOps, and cybersecurity.",
 };
 
-export default function BlogPage() {
-  const posts = getAllPosts();
+export default async function BlogPage() {
+  const posts = await getAllPostsMerged();
 
   return (
     <Container className="flex flex-col mt-3">
@@ -29,7 +31,7 @@ export default function BlogPage() {
                 title: post.title,
                 description: post.description,
                 tags: post.tags,
-                publishedDate: post.publishedDate,
+                publishedDate: getRelativeTime(post.publishedDate),
                 readTime: post.readTime,
                 author: post.author,
               }}
