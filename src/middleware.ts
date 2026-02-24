@@ -26,9 +26,9 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          // Write refreshed tokens to the request (for downstream Server Components)
-          cookiesToSet.forEach(({ name, value, options }) =>
-            request.cookies.set({ name, value, ...options })
+          // Forward refreshed tokens on the request (for downstream Server Components)
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
           );
           // Recreate response so the new cookies are forwarded to the browser
           supabaseResponse = NextResponse.next({ request });
@@ -48,22 +48,22 @@ export async function middleware(request: NextRequest) {
   // Unauthenticated → redirect to login (copying session cookies so token
   // refresh isn't lost)
   if (!user && !isPublicAdminRoute) {
-    const redirectResponse = NextResponse.redirect(
-      new URL("/admin/login", request.url)
-    );
+    const url = request.nextUrl.clone();
+    url.pathname = "/admin/login";
+    const redirectResponse = NextResponse.redirect(url);
     supabaseResponse.cookies.getAll().forEach((cookie) =>
-      redirectResponse.cookies.set(cookie.name, cookie.value, cookie)
+      redirectResponse.cookies.set(cookie)
     );
     return redirectResponse;
   }
 
   // Already authenticated → redirect away from login
   if (user && pathname === "/admin/login") {
-    const redirectResponse = NextResponse.redirect(
-      new URL("/admin/dashboard", request.url)
-    );
+    const url = request.nextUrl.clone();
+    url.pathname = "/admin/dashboard";
+    const redirectResponse = NextResponse.redirect(url);
     supabaseResponse.cookies.getAll().forEach((cookie) =>
-      redirectResponse.cookies.set(cookie.name, cookie.value, cookie)
+      redirectResponse.cookies.set(cookie)
     );
     return redirectResponse;
   }
