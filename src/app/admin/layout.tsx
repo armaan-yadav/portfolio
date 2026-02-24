@@ -4,18 +4,16 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  // Middleware already protects admin routes — just check user here for
-  // rendering (navbar vs plain wrapper for login page).
-  // Use getSession() instead of getUser() because getSession() reads from
-  // cookies without making a network call, so it works even when Server
-  // Components can't write refreshed cookies back.
+  // Auth guard: Only allow access to admin UI if user is authenticated.
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!user) {
+    // Not authenticated: show only the child (login page or error)
     return <div className="min-h-screen bg-white dark:bg-black">{children}</div>;
   }
 
+  // Authenticated: show admin navbar and content
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-black text-black dark:text-white">
       <header className="w-full border-b border-black/10 dark:border-white/10 px-6 py-3 flex items-center justify-between shrink-0">
@@ -35,7 +33,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </Link>
         </div>
         <div className="flex items-center gap-4 text-xs text-black/50 dark:text-white/50">
-          <span>{session.user.email}</span>
+          <span>{user.email}</span>
           <Link href="/admin/auth/signout" className="hover:text-red-500 transition-colors">
             Sign out
           </Link>
