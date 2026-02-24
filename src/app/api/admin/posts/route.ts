@@ -6,16 +6,20 @@ import type { Post, PostInsert } from "@/types/supabase";
 async function assertAdmin() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
+  if (!user) return { error: true, reason: "No user found in Supabase session. Make sure you are logged in and cookies are sent." };
+  
   const adminEmail = process.env.ADMIN_EMAIL;
-  if (adminEmail && user.email !== adminEmail) return null;
-  return user;
+  if (adminEmail && user.email !== adminEmail) {
+    return { error: true, reason: `Not an admin. Logged in as: ${user.email}. Expected: ${adminEmail}` };
+  }
+  
+  return { error: false, user };
 }
 
 // GET /api/admin/posts – list all posts
 export async function GET() {
-  const user = await assertAdmin();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await assertAdmin();
+  if (auth.error) return NextResponse.json({ error: auth.reason }, { status: 401 });
 
   const db = createAdminClient();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,8 +30,8 @@ export async function GET() {
 
 // POST /api/admin/posts – create post
 export async function POST(request: NextRequest) {
-  const user = await assertAdmin();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await assertAdmin();
+  if (auth.error) return NextResponse.json({ error: auth.reason }, { status: 401 });
 
   const body = await request.json();
 

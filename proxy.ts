@@ -25,13 +25,13 @@ export async function proxy(request: NextRequest) {
     }
   );
 
-  // Refresh session — use getSession() in middleware to avoid a live
-  // network round-trip to Supabase on every request (getUser() makes one,
-  // which can fail/timeout at the edge and incorrectly return null).
+  // Use getUser() so the session token is validated against the Supabase Auth
+  // server on every request. This prevents the "Invalid Refresh Token" errors
+  // caused by getSession() trying to use stale cookies, and avoids the
+  // security warning about trusting unverified session data from storage.
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const user = session?.user ?? null;
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
   const isLoginPage = request.nextUrl.pathname === "/admin/login";

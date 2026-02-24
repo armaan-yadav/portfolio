@@ -1,10 +1,11 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  // No user = login page (middleware handles redirect for protected routes)
   if (!user) {
     return <div className="min-h-screen bg-white dark:bg-black">{children}</div>;
   }

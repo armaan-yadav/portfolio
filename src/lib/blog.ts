@@ -9,7 +9,7 @@ import rehypePrettyCode from "rehype-pretty-code";
 import { createClient } from "@supabase/supabase-js";
 import type { Post } from "@/types/supabase";
 
-const contentDirectory = path.join(process.cwd(), "app/content");
+const contentDirectory = path.join(process.cwd(), "src/app/content");
 
 export interface BlogPostMeta {
   slug: string;
