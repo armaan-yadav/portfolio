@@ -104,11 +104,17 @@ body {
   display: inline-block;
 }
 
-.blog-content pre > code[data-line-numbers-max-digits="2"] > [data-line]::before {
+.blog-content
+  pre
+  > code[data-line-numbers-max-digits="2"]
+  > [data-line]::before {
   width: 2rem;
 }
 
-.blog-content pre > code[data-line-numbers-max-digits="3"] > [data-line]::before {
+.blog-content
+  pre
+  > code[data-line-numbers-max-digits="3"]
+  > [data-line]::before {
   width: 3rem;
 }
 
@@ -171,7 +177,7 @@ body {
   @apply ring-2 ring-blue-500 ring-offset-1 rounded;
 }
 
-/* Blog content – images from Supabase posts */
+/* Blog content – images from Firebase posts */
 .blog-content img {
   @apply max-w-full rounded-lg border border-gray-200 dark:border-gray-700 my-4 block;
 }
@@ -184,4 +190,3 @@ body {
 .blog-content a {
   @apply text-blue-600 dark:text-blue-400 underline;
 }
-

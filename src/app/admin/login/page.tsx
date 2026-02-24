@@ -1,13 +1,18 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { RiLockLine, RiMailLine, RiEyeLine, RiEyeOffLine } from "react-icons/ri";
+import {
+  RiLockLine,
+  RiMailLine,
+  RiEyeLine,
+  RiEyeOffLine,
+} from "react-icons/ri";
+import { auth } from "@/lib/firebase/client";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 function LoginForm() {
   const router = useRouter();
-  const supabase = createClient();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,20 +25,31 @@ function LoginForm() {
     setError("");
     setLoading(true);
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+      const idToken = await userCredential.user.getIdToken();
 
-    setLoading(false);
+      const response = await fetch("/api/admin/auth/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
 
-    if (signInError) {
-      setError(signInError.message);
-      return;
+      if (!response.ok) {
+        throw new Error("Failed to set session. You might not be an admin.");
+      }
+
+      router.push("/admin/dashboard");
+      router.refresh();
+    } catch (err: any) {
+      setError(err.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
-
-    router.push("/admin/dashboard");
-    router.refresh();
   };
 
   const input =
@@ -55,7 +71,10 @@ function LoginForm() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="relative">
-            <RiMailLine className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
+            <RiMailLine
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={15}
+            />
             <input
               className={input}
               type="email"
@@ -68,7 +87,10 @@ function LoginForm() {
           </div>
 
           <div className="relative">
-            <RiLockLine className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
+            <RiLockLine
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={15}
+            />
             <input
               className={`${input} pr-10`}
               type={showPassword ? "text" : "password"}
@@ -84,7 +106,11 @@ function LoginForm() {
               onClick={() => setShowPassword((v) => !v)}
               tabIndex={-1}
             >
-              {showPassword ? <RiEyeOffLine size={15} /> : <RiEyeLine size={15} />}
+              {showPassword ? (
+                <RiEyeOffLine size={15} />
+              ) : (
+                <RiEyeLine size={15} />
+              )}
             </button>
           </div>
 

@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import type { Post } from "@/types/supabase";
+import type { Post } from "@/types/firebase";
 
-const TipTapEditor = dynamic(() => import("@/components/admin/TipTapEditor"), { ssr: false });
+const TipTapEditor = dynamic(() => import("@/components/admin/TipTapEditor"), {
+  ssr: false,
+});
 
 interface PostFormProps {
   post?: Post;
@@ -33,7 +35,9 @@ export default function PostForm({ post }: PostFormProps) {
   const [author, setAuthor] = useState(post?.author ?? "Armaan Yadav");
   const [readTime, setReadTime] = useState(post?.read_time ?? "5 min read");
   const [published, setPublished] = useState(post?.published ?? false);
-  const [saving, setSaving] = useState<"draft" | "publish" | "unpublish" | null>(null);
+  const [saving, setSaving] = useState<
+    "draft" | "publish" | "unpublish" | null
+  >(null);
   const [coverUploading, setCoverUploading] = useState(false);
   const [coverError, setCoverError] = useState(false);
   const [error, setError] = useState("");
@@ -47,14 +51,23 @@ export default function PostForm({ post }: PostFormProps) {
     setCoverUploading(true);
     const formData = new FormData();
     formData.append("file", file);
-    const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
+    const res = await fetch("/api/admin/upload", {
+      method: "POST",
+      body: formData,
+    });
     setCoverUploading(false);
-    if (!res.ok) { setError("Cover upload failed"); return; }
+    if (!res.ok) {
+      setError("Cover upload failed");
+      return;
+    }
     const { url } = await res.json();
     setCoverImage(url);
   };
 
-  const save = async (publishState: boolean, action: "draft" | "publish" | "unpublish") => {
+  const save = async (
+    publishState: boolean,
+    action: "draft" | "publish" | "unpublish",
+  ) => {
     setError("");
     setSaving(action);
 
@@ -64,11 +77,16 @@ export default function PostForm({ post }: PostFormProps) {
       description,
       content,
       cover_image: coverImage,
-      tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
+      tags: tags
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
       author,
       read_time: readTime,
       published: publishState,
-      published_at: publishState ? (post?.published_at ?? new Date().toISOString()) : null,
+      published_at: publishState
+        ? (post?.published_at ?? new Date().toISOString())
+        : null,
     };
 
     const url = isEdit ? `/api/admin/posts/${post!.id}` : "/api/admin/posts";
@@ -99,14 +117,21 @@ export default function PostForm({ post }: PostFormProps) {
   };
 
   const handleDelete = async () => {
-    if (!post || !confirm(`Delete "${post.title}"? This cannot be undone.`)) return;
-    const res = await fetch(`/api/admin/posts/${post.id}`, { method: "DELETE" });
-    if (!res.ok) { setError("Delete failed"); return; }
+    if (!post || !confirm(`Delete "${post.title}"? This cannot be undone.`))
+      return;
+    const res = await fetch(`/api/admin/posts/${post.id}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) {
+      setError("Delete failed");
+      return;
+    }
     router.push("/admin/dashboard");
     router.refresh();
   };
 
-  const label = "block text-xs font-medium text-black/60 dark:text-white/60 mb-1 uppercase tracking-wider";
+  const label =
+    "block text-xs font-medium text-black/60 dark:text-white/60 mb-1 uppercase tracking-wider";
   const input =
     "w-full px-3 py-2 border border-black/20 dark:border-white/20 bg-white dark:bg-black text-sm focus:outline-none focus:border-black dark:focus:border-white transition-colors dark:text-white";
 
@@ -166,14 +191,24 @@ export default function PostForm({ post }: PostFormProps) {
           />
           <label className="cursor-pointer inline-flex items-center px-3 py-2 border border-black/20 dark:border-white/20 text-sm bg-white dark:bg-black hover:border-black dark:hover:border-white transition-colors whitespace-nowrap">
             {coverUploading ? "Uploading…" : "Upload"}
-            <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadCover(f); e.target.value = ""; }} />
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) uploadCover(f);
+                e.target.value = "";
+              }}
+            />
           </label>
         </div>
         {coverImage && (
           <div className="mt-2">
             {coverError ? (
               <div className="h-24 flex items-center justify-center border border-dashed border-black/20 dark:border-white/20 text-xs text-black/40 dark:text-white/40">
-                Image failed to load — check bucket is public in Supabase Storage
+                Image failed to load — check bucket is public in Firebase
+                Storage
               </div>
             ) : (
               <img
@@ -192,15 +227,29 @@ export default function PostForm({ post }: PostFormProps) {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
           <label className={label}>Author</label>
-          <input className={input} value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input
+            className={input}
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+          />
         </div>
         <div>
           <label className={label}>Read Time</label>
-          <input className={input} value={readTime} onChange={(e) => setReadTime(e.target.value)} placeholder="5 min read" />
+          <input
+            className={input}
+            value={readTime}
+            onChange={(e) => setReadTime(e.target.value)}
+            placeholder="5 min read"
+          />
         </div>
         <div>
           <label className={label}>Tags (comma-separated)</label>
-          <input className={input} value={tags} onChange={(e) => setTags(e.target.value)} placeholder="nginx, ssl, devops" />
+          <input
+            className={input}
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            placeholder="nginx, ssl, devops"
+          />
         </div>
       </div>
 

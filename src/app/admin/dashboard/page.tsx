@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { adminDb } from "@/lib/firebase/admin";
 import Link from "next/link";
 import { RiEditLine, RiAddLine } from "react-icons/ri";
 import PublishToggle from "@/components/admin/PublishToggle";
@@ -6,13 +6,7 @@ import PublishToggle from "@/components/admin/PublishToggle";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: postsRaw, error } = await (supabase.from("posts") as any)
-    .select("id, title, slug, published, published_at, tags, read_time, created_at")
-    .order("created_at", { ascending: false });
-
-  const posts = postsRaw as Array<{
+  let posts: Array<{
     id: string;
     title: string;
     slug: string;
@@ -21,12 +15,40 @@ export default async function DashboardPage() {
     tags: string[];
     read_time: string;
     created_at: string;
-  }> | null;
+  }> | null = null;
+  let errorMsg = null;
 
-  if (error) {
+  try {
+    if (!adminDb) {
+      throw new Error("Firebase Admin DB not initialized");
+    }
+
+    const snapshot = await adminDb
+      .collection("posts")
+      .orderBy("created_at", "desc")
+      .get();
+
+    posts = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        title: data.title || "",
+        slug: data.slug || "",
+        published: data.published || false,
+        published_at: data.published_at || null,
+        tags: data.tags || [],
+        read_time: data.read_time || "",
+        created_at: data.created_at || new Date().toISOString(),
+      };
+    });
+  } catch (err: any) {
+    errorMsg = err.message;
+  }
+
+  if (errorMsg) {
     return (
       <div className="p-4 border border-red-400 text-sm text-red-600 dark:text-red-400">
-        Failed to load posts: {error.message}
+        Failed to load posts: {errorMsg}
       </div>
     );
   }
@@ -41,7 +63,8 @@ export default async function DashboardPage() {
         <div>
           <h1 className="text-xl font-bold tracking-tight">Posts</h1>
           <p className="text-xs text-black/50 dark:text-white/50 mt-0.5">
-            {posts?.length ?? 0} total · {published.length} published · {drafts.length} drafts
+            {posts?.length ?? 0} total · {published.length} published ·{" "}
+            {drafts.length} drafts
           </p>
         </div>
         <Link
@@ -57,7 +80,10 @@ export default async function DashboardPage() {
       {!posts || posts.length === 0 ? (
         <div className="py-20 text-center text-sm text-black/40 dark:text-white/40 border border-dashed border-black/20 dark:border-white/20">
           No posts yet.{" "}
-          <Link href="/admin/posts/new" className="underline underline-offset-2">
+          <Link
+            href="/admin/posts/new"
+            className="underline underline-offset-2"
+          >
             Create your first post →
           </Link>
         </div>
@@ -76,19 +102,26 @@ export default async function DashboardPage() {
             <div
               key={post.id}
               className={`grid grid-cols-[1fr_auto_auto_auto_auto] gap-4 items-center px-4 py-3 text-sm ${
-                i !== posts.length - 1 ? "border-b border-black/10 dark:border-white/10" : ""
+                i !== posts.length - 1
+                  ? "border-b border-black/10 dark:border-white/10"
+                  : ""
               } hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors`}
             >
               {/* Title + slug */}
               <div className="min-w-0">
                 <p className="font-medium truncate text-xs">{post.title}</p>
-                <p className="text-xs text-black/40 dark:text-white/40 truncate">/blog/{post.slug}</p>
+                <p className="text-xs text-black/40 dark:text-white/40 truncate">
+                  /blog/{post.slug}
+                </p>
               </div>
 
               {/* Tags */}
               <div className="hidden md:flex gap-1">
                 {post.tags?.slice(0, 2).map((tag: string) => (
-                  <span key={tag} className="text-xs border border-black/20 dark:border-white/20 px-1.5 py-0.5">
+                  <span
+                    key={tag}
+                    className="text-xs border border-black/20 dark:border-white/20 px-1.5 py-0.5"
+                  >
                     {tag}
                   </span>
                 ))}
@@ -97,7 +130,11 @@ export default async function DashboardPage() {
               {/* Date */}
               <span className="hidden sm:block text-xs text-black/40 dark:text-white/40 whitespace-nowrap">
                 {post.published_at
-                  ? new Date(post.published_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+                  ? new Date(post.published_at).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })
                   : "—"}
               </span>
 

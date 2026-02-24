@@ -4,8 +4,15 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "*.supabase.co",
-        pathname: "/storage/v1/object/public/**",
+        hostname: "*.public.blob.vercel-storage.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.firebasestorage.app",
+      },
+      {
+        protocol: "https",
+        hostname: "*.firebasestorage.googleapis.com",
       },
     ],
   },

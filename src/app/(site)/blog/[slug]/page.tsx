@@ -3,8 +3,8 @@ import {
   getAllSlugs,
   getRelatedPosts,
   getRelativeTime,
-  getSupabasePostBySlug,
-  getSupabasePosts,
+  getFirebasePostBySlug,
+  getFirebasePosts,
 } from "@/lib/blog";
 import { notFound } from "next/navigation";
 import { RiCalendarLine, RiTimeLine, RiUser3Line } from "react-icons/ri";
@@ -20,13 +20,13 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const [localSlugs, supabasePosts] = await Promise.all([
+  const [localSlugs, firebasePosts] = await Promise.all([
     Promise.resolve(getAllSlugs()),
-    getSupabasePosts(),
+    getFirebasePosts(),
   ]);
   const allSlugs = [
     ...localSlugs,
-    ...supabasePosts.map((p) => p.slug).filter((s) => !localSlugs.includes(s)),
+    ...firebasePosts.map((p) => p.slug).filter((s) => !localSlugs.includes(s)),
   ];
   return allSlugs.map((slug) => ({ slug }));
 }
@@ -35,7 +35,8 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = (await getSupabasePostBySlug(slug)) ?? (await getPostBySlug(slug));
+  const post =
+    (await getFirebasePostBySlug(slug)) ?? (await getPostBySlug(slug));
 
   if (!post) {
     return { title: "Post Not Found" };
@@ -57,8 +58,9 @@ export async function generateMetadata({
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
 
-  // Check Supabase first, fall back to local markdown
-  const post = (await getSupabasePostBySlug(slug)) ?? (await getPostBySlug(slug));
+  // Check Firebase first, fall back to local markdown
+  const post =
+    (await getFirebasePostBySlug(slug)) ?? (await getPostBySlug(slug));
 
   if (!post) {
     notFound();

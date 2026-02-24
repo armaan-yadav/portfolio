@@ -16,21 +16,3 @@ export interface Post {
 
 export type PostInsert = Omit<Post, "id" | "created_at" | "updated_at">;
 export type PostUpdate = Partial<PostInsert>;
-
-export interface Database {
-  public: {
-    Tables: {
-      posts: {
-        Row: Post;
-        Insert: PostInsert;
-        Update: PostUpdate;
-        Relationships: [];
-      };
-    };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
-    Enums: Record<string, never>;
-    CompositeTypes: Record<string, never>;
-  };
-}
-

@@ -1,7 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
+import { adminDb } from "@/lib/firebase/admin";
 import PostForm from "@/components/admin/PostForm";
 import { notFound } from "next/navigation";
-import type { Post } from "@/types/supabase";
+import type { Post } from "@/types/firebase";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -9,17 +9,18 @@ interface PageProps {
 
 export default async function EditPostPage({ params }: PageProps) {
   const { id } = await params;
-  const supabase = await createClient();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: postRaw, error } = await (supabase.from("posts") as any)
-    .select("*")
-    .eq("id", id)
-    .single();
+  if (!adminDb) {
+    throw new Error("Firebase admin database not initialized");
+  }
 
-  const post = postRaw as Post | null;
+  const doc = await adminDb.collection("posts").doc(id).get();
 
-  if (error || !post) notFound();
+  if (!doc.exists) {
+    notFound();
+  }
+
+  const post = { id: doc.id, ...doc.data() } as Post;
 
   return (
     <div className="w-full">
