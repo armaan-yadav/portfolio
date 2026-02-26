@@ -1,13 +1,13 @@
+import type { Post } from "@/types/firebase";
 import fs from "fs";
-import path from "path";
 import matter from "gray-matter";
-import { unified } from "unified";
+import path from "path";
+import rehypePrettyCode from "rehype-pretty-code";
+import rehypeStringify from "rehype-stringify";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
-import rehypeStringify from "rehype-stringify";
-import rehypePrettyCode from "rehype-pretty-code";
-import type { Post } from "@/types/firebase";
-import { adminDb } from "@/lib/firebase/admin";
+import { unified } from "unified";
+import { db } from "./firebase-admin";
 
 const contentDirectory = path.join(process.cwd(), "src/app/content");
 
@@ -164,10 +164,10 @@ function firebasePostToMeta(post: Post): BlogPostMeta {
 }
 
 export async function getFirebasePosts(): Promise<BlogPostMeta[]> {
-  if (!adminDb) return [];
+  if (!db) return [];
   
   try {
-    const snapshot = await adminDb.collection("posts")
+    const snapshot = await db.collection("posts")
       .where("published", "==", true)
       .orderBy("published_at", "desc")
       .get();
@@ -184,10 +184,10 @@ export async function getFirebasePosts(): Promise<BlogPostMeta[]> {
 export async function getFirebasePostBySlug(
   slug: string
 ): Promise<BlogPost | null> {
-  if (!adminDb) return null;
+  if (!db) return null;
   
   try {
-    const snapshot = await adminDb.collection("posts")
+    const snapshot = await db.collection("posts")
       .where("slug", "==", slug)
       .where("published", "==", true)
       .limit(1)

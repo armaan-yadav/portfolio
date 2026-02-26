@@ -1,7 +1,7 @@
-import { adminDb } from "@/lib/firebase/admin";
 import PostForm from "@/components/admin/PostForm";
 import { notFound } from "next/navigation";
 import type { Post } from "@/types/firebase";
+import { db } from "@/lib/firebase-admin";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -10,11 +10,11 @@ interface PageProps {
 export default async function EditPostPage({ params }: PageProps) {
   const { id } = await params;
 
-  if (!adminDb) {
+  if (!db) {
     throw new Error("Firebase admin database not initialized");
   }
 
-  const doc = await adminDb.collection("posts").doc(id).get();
+  const doc = await db.collection("posts").doc(id).get();
 
   if (!doc.exists) {
     notFound();

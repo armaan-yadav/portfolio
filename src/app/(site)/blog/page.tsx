@@ -1,12 +1,13 @@
-import { getAllPostsMerged, getRelativeTime } from "@/lib/blog";
 import BlogPostItem from "@/components/BlogPostItem";
 import Container from "@/components/Container";
+import { getAllPostsMerged, getRelativeTime } from "@/lib/blog";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Blog | Armaan Yadav",
-  description: "Technical articles and tutorials on web development, DevOps, and cybersecurity.",
+  description:
+    "Technical articles and tutorials on web development, DevOps, and cybersecurity.",
 };
 
 export default async function BlogPage() {

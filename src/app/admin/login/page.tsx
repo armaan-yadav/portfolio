@@ -1,15 +1,15 @@
 "use client";
 
+import { auth } from "@/lib/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
-  RiLockLine,
-  RiMailLine,
   RiEyeLine,
   RiEyeOffLine,
+  RiLockLine,
+  RiMailLine,
 } from "react-icons/ri";
-import { auth } from "@/lib/firebase/client";
-import { signInWithEmailAndPassword } from "firebase/auth";
 
 function LoginForm() {
   const router = useRouter();
@@ -26,23 +26,7 @@ function LoginForm() {
     setLoading(true);
 
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
-      const idToken = await userCredential.user.getIdToken();
-
-      const response = await fetch("/api/admin/auth/session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idToken }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to set session. You might not be an admin.");
-      }
-
+      await signInWithEmailAndPassword(auth, email, password);
       router.push("/admin/dashboard");
       router.refresh();
     } catch (err: any) {
@@ -51,7 +35,6 @@ function LoginForm() {
       setLoading(false);
     }
   };
-
   const input =
     "w-full pl-9 pr-4 py-2.5 border border-black/20 dark:border-white/20 bg-white dark:bg-black text-sm focus:outline-none focus:border-black dark:focus:border-white transition-colors dark:text-white placeholder:text-black/30 dark:placeholder:text-white/30";
 

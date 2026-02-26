@@ -1,7 +1,7 @@
-import { adminDb } from "@/lib/firebase/admin";
-import Link from "next/link";
-import { RiEditLine, RiAddLine } from "react-icons/ri";
 import PublishToggle from "@/components/admin/PublishToggle";
+import { db } from "@/lib/firebase-admin";
+import Link from "next/link";
+import { RiAddLine, RiEditLine } from "react-icons/ri";
 
 export const dynamic = "force-dynamic";
 
@@ -19,11 +19,11 @@ export default async function DashboardPage() {
   let errorMsg = null;
 
   try {
-    if (!adminDb) {
+    if (!db) {
       throw new Error("Firebase Admin DB not initialized");
     }
 
-    const snapshot = await adminDb
+    const snapshot = await db
       .collection("posts")
       .orderBy("created_at", "desc")
       .get();
